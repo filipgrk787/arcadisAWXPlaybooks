@@ -4,7 +4,7 @@
   gather_facts: yes
   tasks:
     - name: Get disk space information
-      ansible.builtin.command: "df -h | grep '^/'"
+      ansible.builtin.command: sudo df-h | grep /dev
       register: disk_space_info
       changed_when: false
 
