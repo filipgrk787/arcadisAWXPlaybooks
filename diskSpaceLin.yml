@@ -1,0 +1,14 @@
+---
+- name: Check free space on mounted filesystems
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - name: Get disk space information
+      ansible.builtin.command: "df -h | grep '^/'"
+      register: disk_space_info
+      changed_when: false
+
+    - name: Print disk space information
+      debug:
+        msg: "{{ item }}"
+      loop: "{{ disk_space_info.stdout_lines }}"
