@@ -1,6 +1,5 @@
 ---
 - name: Check SSH Connectivity to vCenter
-  hosts: vcenter_server
   gather_facts: no
   tasks:
     - name: Check SSH connectivity
