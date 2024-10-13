@@ -1,0 +1,7 @@
+---
+- name: Ping all hosts in the "OO VMs" inventory
+  hosts: all
+  gather_facts: no
+  tasks:
+    - name: Ping Windows hosts
+      win_ping:
