@@ -1,36 +1,40 @@
 ---
-- name: Apply all available Windows updates
+- name: Apply all available Windows updates (including feature updates)
   hosts: all
   gather_facts: no
   tasks:
-    - name: Install all available Windows updates
+    - name: Install all available Windows updates (all categories)
       win_updates:
-        category_names:
+        category_names:  # You can remove this line to install all updates regardless of category
           - SecurityUpdates
           - CriticalUpdates
+          - FeaturePacks  # Include feature updates
+          - Updates       # General updates (including other non-critical updates)
       register: update_result
       until: update_result.updates | length == 0
       retries: 5
-      delay: 300  # Wait for 5 minutes between retries
+      delay: 300  # Retry every 5 minutes to ensure all updates are processed
 
     - name: Reboot the machine if updates were applied
       win_reboot:
       when: update_result.reboot_required
       retries: 5
-      delay: 300  # Delay to allow reboot to complete before retrying
+      delay: 300  # Delay for reboot
 
-    - name: Check if more updates are available after reboot
+    - name: Check for more updates after reboot
       win_updates:
         category_names:
           - SecurityUpdates
           - CriticalUpdates
+          - FeaturePacks  # Ensure feature updates are included
+          - Updates
       register: post_reboot_updates
       until: post_reboot_updates.updates | length == 0
       retries: 5
-      delay: 300  # Retry every 5 minutes to ensure no more updates are available
+      delay: 300
 
-    - name: Reboot again if more updates were installed after the first reboot
+    - name: Reboot again if more updates were applied
       win_reboot:
       when: post_reboot_updates.reboot_required
       retries: 5
-      delay: 300  # Delay to allow reboot
+      delay: 300
