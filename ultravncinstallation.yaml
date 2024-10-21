@@ -3,18 +3,22 @@
   hosts: all
   gather_facts: no
   tasks:
-    - name: Download UltraVNC installer
-      win_get_url:
-        url: "https://uvnc.eu/download/1436/UltraVNC_1436_X64_Setup.exe;"
-        dest: C:\Temp\UltraVNC_1436_X64_Setup.exe
-      register: download_status
+    - name: Create destination directory on Windows
+      win_file:
+        path: C:\Temp\Downloads
+        state: directory
 
-    - name: Install UltraVNC server
+    - name: Copy UltraVNC installer to Windows machine
+      ansible.builtin.copy:
+        src: /home/filipgrk/downloads/UltraVNC_1436_X64_Setup.exe
+        dest: C:\Temp\Downloads\UltraVNC_1436_X64_Setup.exe
+        mode: '0755'
+
+    - name: Install UltraVNC silently
       win_package:
-        path: C:\Temp\UltraVNC_1436_X64_Setup.exe
+        path: C:\Temp\Downloads\UltraVNC_1436_X64_Setup.exe
         product_id: "{PRODUCT_ID_OF_ULTRAVNC}"
         arguments: '/SILENT /NORESTART'
-      when: download_status is succeeded
 
     - name: Ensure UltraVNC service is running
       win_service:
@@ -24,5 +28,5 @@
 
     - name: Clean up UltraVNC installer
       win_file:
-        path: C:\Temp\UltraVNC_1436_X64_Setup.exe
+        path: C:\Temp\Downloads\UltraVNC_1436_X64_Setup.exe
         state: absent
