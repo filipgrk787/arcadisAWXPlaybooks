@@ -10,7 +10,7 @@
 
     - name: Copy UltraVNC installer from network share to Windows machine
       win_shell: |
-        net use Z: \\10.147.56.24\ibi
+        net use Z: \\10.147.56.24\ibi /user:athens\p.gavrilovic Newstarisborn787!
         copy Z:\UltraVNC_1436_X86_Setup.exe C:\Temp\UltraVNC_1436_X86_Setup.exe
         net use Z: /delete
       args:
