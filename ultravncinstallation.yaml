@@ -17,7 +17,6 @@
     - name: Install UltraVNC silently
       win_package:
         path: C:\Temp\Downloads\UltraVNC_1436_X64_Setup.exe
-        product_id: "{PRODUCT_ID_OF_ULTRAVNC}"
         arguments: '/SILENT /NORESTART'
 
     - name: Ensure UltraVNC service is running
