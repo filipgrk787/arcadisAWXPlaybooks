@@ -1,22 +1,24 @@
 ---
-- name: Install UltraVNC on all Windows hosts
+- name: Install UltraVNC from a network share
   hosts: all
   gather_facts: no
   tasks:
     - name: Create destination directory on Windows
       win_file:
-        path: C:\Temp\Downloads
+        path: C:\Temp
         state: directory
 
-    - name: Copy UltraVNC installer to Windows machine
-      ansible.builtin.copy:
-        src: /home/filipgrk/downloads/UltraVNC_1436_X64_Setup.exe
-        dest: C:\Temp\Downloads\UltraVNC_1436_X64_Setup.exe
-        mode: '0755'
+    - name: Copy UltraVNC installer from network share to Windows machine
+      win_shell: |
+        net use Z: \\10.147.56.24\ibi /user:your_username your_password
+        copy Z:\UltraVNC_1436_X86_Setup.exe C:\Temp\UltraVNC_1436_X86_Setup.exe
+        net use Z: /delete
+      args:
+        executable: cmd
 
     - name: Install UltraVNC silently
       win_package:
-        path: C:\Temp\Downloads\UltraVNC_1436_X64_Setup.exe
+        path: C:\Temp\UltraVNC_1436_X86_Setup.exe
         arguments: '/SILENT /NORESTART'
 
     - name: Ensure UltraVNC service is running
@@ -27,5 +29,5 @@
 
     - name: Clean up UltraVNC installer
       win_file:
-        path: C:\Temp\Downloads\UltraVNC_1436_X64_Setup.exe
+        path: C:\Temp\UltraVNC_1436_X86_Setup.exe
         state: absent
